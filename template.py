@@ -3,6 +3,12 @@
 
 import pandas as pd
 import datetime as dt
+import matplotlib.pyplot as plt
+import numpy as np
+
+from pandas import DataFrame
+from pandas.core.interchange import dataframe
+
 """
 Created on Fri Oct 23 12:16:36 2026
 
@@ -35,9 +41,6 @@ with open("ExtractedInput.txt", "r", encoding="UTF8") as file: # UTF8 to account
                 row_values.append(value.strip())
 
         records.append(row_values)
-#-------------------------------------------------------------------------------------
-print(f"First 4 Records:\n{records[0]}\n{records[1]}\n{records[2]}\n{records[3]}\n\n")
-#-------------------------------------------------------------------------------------
 
 movie_df = pd.DataFrame(records, columns=columns)
 
@@ -67,7 +70,44 @@ movie_df.info()
 #def task2():
     
     # your implementation goes here.
+
+movie_df.info() # need to fix the dates (currently using US datetime and some are EU)
+
+movie_df.to_csv("film.csv")
+
+
+def task1(): # visualisation technique
+
+    # sort the values by date and set date as the index
+    df_sorted = movie_df.sort_values("date").set_index("date")
+
+    plt.figure(figsize=(10, 5))
+
+    # Y values scaled to 'Millions'
+    gross_in_millions = df_sorted["gross_cost"] / 1_000_000
+    plt.plot(df_sorted.index, gross_in_millions, label="Gross Cost")
+
+    plt.xlabel("Date")
+    plt.ylabel("Gross Cost (Millions $)")
+    plt.title("Total Gross Movie Cost Over Time")
+    plt.tight_layout() # automatically adjusts padding and margins around the plot elements
+    plt.show()
+
+    # I chose to use a time series plot because it shows trends and outliers in the data very well and can be clearly understood.
     
+def task2():
+    # year_counts is a pd series containing years and their respective counts
+    year_counts = movie_df['date'].dt.year.value_counts()
+    year_counts.sort_index()
+
+    # histogram
+    plt.figure(figsize=(10, 5))
+    plt.hist(year_counts)
+    plt.xlabel("Year")
+    plt.ylabel("Frequency")
+    plt.title("Movie Year Frequency Distribution")
+    plt.tight_layout()
+    plt.show()
     
 #def task3():
     
@@ -96,6 +136,7 @@ movie_df.info()
 
 #task1()
 #task2()
+task2()
 #task3()
 #task4()
 #task5()
